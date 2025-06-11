@@ -6,9 +6,6 @@ import Button from '../components/ui/Button';
 import PersonalInfoForm from '../components/ui/ResumeForm/PersonalInfoForm';
 import { Resume } from '../types';
 import { generateResumeDocx } from '../utils/generateResumeDocx';
-import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
-import { saveAs } from 'file-saver';
 
 // Define a type for the form data that omits backend fields
 type ResumeFormData = Omit<Resume, '_id' | 'userId' | 'type' | 'createdAt' | 'updatedAt'>;
@@ -223,46 +220,46 @@ const CreateResume: React.FC = () => {
     }
   };
 
-  // Download resume
-  const handleDownload = async (type: string) => {
-    const resumeElement = document.querySelector('#resume-preview') as HTMLElement;
+  // // Download resume
+  // const handleDownload = async (type: string) => {
+  //   const resumeElement = document.querySelector('#resume-preview') as HTMLElement;
 
-    if (!resumeElement) return;
+  //   if (!resumeElement) return;
 
-    if (type === 'pdf') {
-      const canvas = await html2canvas(resumeElement, {
-        scale: 2,
-        useCORS: true
-      });
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+  //   if (type === 'pdf') {
+  //     const canvas = await html2canvas(resumeElement, {
+  //       scale: 2,
+  //       useCORS: true
+  //     });
+  //     const imgData = canvas.toDataURL('image/png');
+  //     const pdf = new jsPDF('p', 'mm', 'a4');
+  //     const imgProps = pdf.getImageProperties(imgData);
+  //     const pdfWidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('resume.pdf');
-    } else if (type === 'doc') {
-      const html = `<!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="UTF-8">
-          <style>
-            body { font-family: serif; padding: 2rem; }
-          </style>
-        </head>
-        <body>
-          ${resumeElement.innerHTML}
-        </body>
-        </html>`;
+  //     pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+  //     pdf.save('resume.pdf');
+  //   } else if (type === 'doc') {
+  //     const html = `<!DOCTYPE html>
+  //       <html>
+  //       <head>
+  //         <meta charset="UTF-8">
+  //         <style>
+  //           body { font-family: serif; padding: 2rem; }
+  //         </style>
+  //       </head>
+  //       <body>
+  //         ${resumeElement.innerHTML}
+  //       </body>
+  //       </html>`;
 
-      const blob = new Blob([html], {
-        type: 'application/msword'
-      });
+  //     const blob = new Blob([html], {
+  //       type: 'application/msword'
+  //     });
 
-      saveAs(blob, 'resume.doc');
-    }
-  };
+  //     saveAs(blob, 'resume.doc');
+  //   }
+  // };
 
   // Generate resume using AI
   const generateResume = async () => {

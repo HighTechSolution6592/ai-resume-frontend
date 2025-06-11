@@ -1,25 +1,24 @@
 import axios from "axios";
-
 const backend_url = import.meta.env.VITE_BACKEND_URL;
-const userId = "1234567890abcdef12345678"
+
+function getUserEmail() {
+  const user = JSON.parse(localStorage.getItem("user") || "{}")
+  return user.email;
+}
 
 export const improveSummary = async (summary: String, description: String) => {
-
   try {
     const response = await axios.post(backend_url + '/resume/improve-summary', { summary, description });
-    // console.log(response.data);
     return response.data;
   } catch (error: any) {
     console.error("Error improving summary:", error);
     throw error;
   }
-  
 }
 
 export const getAllResume = async () => { 
   try {
-    const response = await axios.post(backend_url + '/resume/all', {userId});
-    // console.log(response.data);
+    const response = await axios.post(backend_url + '/resume/all', {userEmail: getUserEmail()});
     return response.data;
   } catch (error: any) {
     console.error("Error fetching documents:", error);
@@ -28,21 +27,17 @@ export const getAllResume = async () => {
 }
 
 export const addResume = async (resumeData: any) => {
-
   try {
-    await axios.post(backend_url + '/resume/add', { resumeData, userId });
-    // console.log(response.data);
+    await axios.post(backend_url + '/resume/add', { resumeData, userEmail: getUserEmail() });
   } catch  (error: any) {
     console.error("Error adding resume:", error);
     throw error;
   }
-
 }
 
 export const getResume = async (resumeId: string) => {
   try {
-    const response = await axios.post(backend_url + '/resume/get', { resumeId, userId });
-    // console.log(response.data);
+    const response = await axios.post(backend_url + '/resume/get', { resumeId, userEmail: getUserEmail() });
     return response.data;
   } catch (error: any) {
     console.error("Error fetching resume:", error);
@@ -51,8 +46,7 @@ export const getResume = async (resumeId: string) => {
 
 export const updateResume = async (resumeId: string, resumeData: any) => {
   try {
-    await axios.post(backend_url + '/resume/update', { resumeId, resumeData, userId });
-    // console.log(response.data);
+    await axios.post(backend_url + '/resume/update', { resumeId, resumeData, userEmail: getUserEmail() });
   } catch (error: any) {
     console.error("Error updating resume:", error);
     throw error;
@@ -61,8 +55,7 @@ export const updateResume = async (resumeId: string, resumeData: any) => {
 
 export const deleteResume = async (resumeId: string) => {
   try {
-    await axios.post(backend_url + '/resume/delete', { resumeId, userId });
-    // console.log(response.data);
+    await axios.post(backend_url + '/resume/delete', { resumeId, userEmail: getUserEmail() });
   } catch (error: any) {
     console.error("Error deleting resume:", error);
     throw error;
@@ -70,7 +63,6 @@ export const deleteResume = async (resumeId: string) => {
 }
 
 export const generateCoverLetter = async (formData: any) => {
-
   try {
     const response = await axios.post(backend_url + '/coverLetter/generate-coverLetter', { formData});
     console.log(response.data);
@@ -79,12 +71,11 @@ export const generateCoverLetter = async (formData: any) => {
     console.log("Error improving summary:", error);
     throw error;
   }
-  
 }
 
 export const getAllCoverLetter = async () => { 
   try {
-    const response = await axios.post(backend_url + '/coverLetter/all', {userId});
+    const response = await axios.post(backend_url + '/coverLetter/all', {userEmail: getUserEmail()});
     return response.data;
   } catch (error: any) {
     console.error("Error fetching documents:", error);
@@ -93,21 +84,17 @@ export const getAllCoverLetter = async () => {
 }
 
 export const addCoverLetter = async (coverLetterData: any, content: string) => {
-
   try {
-    await axios.post(backend_url + '/coverLetter/add', { coverLetterData, userId, content });
-    // console.log(response.data);
+    await axios.post(backend_url + '/coverLetter/add', { coverLetterData, userEmail: getUserEmail(), content });
   } catch  (error: any) {
     console.error("Error adding cover letter:", error);
     throw error;
   }
-
 }
 
 export const getCoverLetter = async (coverLetterId: string) => {
   try {
-    const response = await axios.post(backend_url + '/coverLetter/get', { coverLetterId, userId });
-    // console.log(response.data);
+    const response = await axios.post(backend_url + '/coverLetter/get', { coverLetterId, userEmail: getUserEmail() });
     return response.data;
   } catch (error: any) {
     console.error("Error fetching cover letter:", error);
@@ -116,8 +103,7 @@ export const getCoverLetter = async (coverLetterId: string) => {
 
 export const updateCoverLetter = async (coverLetterId: string, coverLetterData: any, content: any) => {
   try {
-    await axios.post(backend_url + '/coverLetter/update', { coverLetterId, coverLetterData, content, userId });
-    // console.log(response.data);
+    await axios.post(backend_url + '/coverLetter/update', { coverLetterId, coverLetterData, content, userEmail: getUserEmail() });
   } catch (error: any) {
     console.error("Error updating cover letter:", error);
     throw error;
@@ -126,8 +112,7 @@ export const updateCoverLetter = async (coverLetterId: string, coverLetterData: 
 
 export const deleteCoverLetter = async (coverLetterId: string) => {
   try {
-    await axios.post(backend_url + '/coverLetter/delete', { coverLetterId, userId });
-    // console.log(response.data);
+    await axios.post(backend_url + '/coverLetter/delete', { coverLetterId, userEmail: getUserEmail() });
   } catch (error: any) {
     console.error("Error deleting cover letter:", error);
     throw error;

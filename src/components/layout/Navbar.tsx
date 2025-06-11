@@ -15,7 +15,6 @@ const Navbar: React.FC = () => {
     try {
       await logout();
       navigate('/');
-      toast.success('Successfully logged out!');
     } catch (error) {
       toast.error('Failed to log out. Please try again.');
     }
@@ -30,6 +29,121 @@ const Navbar: React.FC = () => {
               <FileText className="h-8 w-8 text-primary-600" />
               <span className="ml-2 text-xl font-semibold text-gray-900">ResumePilot</span>
             </Link>
+          </div>
+
+          {/* Desktop navigation */}
+          <div className="hidden md:flex md:items-center md:space-x-8">
+            {/* {isAuthenticated ? (
+              <>
+                <Link 
+                  to="/resumes" 
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Resumes
+                </Link>
+                <Link 
+                  to="/cover-letters" 
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Cover Letters
+                </Link>
+                <Link 
+                  to="/cvs" 
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  CVs
+                </Link>
+                <Link 
+                  to="/resources" 
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Resources
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link 
+                  to="/resumes" 
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Resumes
+                </Link>
+                <Link 
+                  to="/cover-letters" 
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Cover Letters
+                </Link>
+                <Link 
+                  to="/cvs" 
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  CVs
+                </Link>
+                <Link 
+                  to="/resources" 
+                  className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
+                >
+                  Resources
+                </Link>
+              </>
+            )} */}
+            
+            {isAuthenticated ? (
+              <div className="relative">
+                <button
+                  className="flex items-center space-x-2 text-sm focus:outline-none"
+                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                >
+                  <img
+                    src={user?.avatarUrl || 'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=150'}
+                    alt="User avatar"
+                    className="h-8 w-8 rounded-full object-cover"
+                  />
+                  <div className="flex flex-col items-start">
+                    <span className="text-gray-700">{user?.name}</span>
+                    {user && !user.isEmailVerified && (
+                      <span className="text-xs text-red-500 font-medium">Unverified</span>
+                    )}
+                  </div>
+                </button>
+
+                {isProfileDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 ring-1 ring-black ring-opacity-5">
+                    {user && !user.isEmailVerified && (
+                      <Link
+                        to="/verify-email"
+                        state={{ email: user.email, fromNavbar: true }}
+                        className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full text-left"
+                        onClick={() => setIsProfileDropdownOpen(false)}
+                      >
+                        <span className="mr-2 h-4 w-4">⚠</span>
+                        Verify Email
+                      </Link>
+                    )}
+                    <Link
+                      to="/sessions"
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                      onClick={() => setIsProfileDropdownOpen(false)}
+                    >
+                      <FileText className="mr-2 h-4 w-4" />
+                      Manage Sessions
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                    >
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign out
+                    </button>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link to="/login">
+                <Button>Sign In</Button>
+              </Link>
+            )}
           </div>
 
           {/* Mobile menu button */}
