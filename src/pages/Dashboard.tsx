@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { File, FileText, Plus, Edit, Download, Trash2, Search, FileCheck } from 'lucide-react';
+import { FileText, Edit, Trash2, FileCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import Navbar from '../components/layout/Navbar';
@@ -299,33 +299,39 @@ const DocumentCard: React.FC<{
             <>
               <h4 className="text-sm font-medium text-gray-700">Position</h4>
               <p className="text-sm text-gray-600">
-                {(Array.isArray(document.workExperience) && document.workExperience[0]?.position) || 'Not specified'}
+                {'workExperience' in document && Array.isArray(document.workExperience) && document.workExperience[0]?.position
+                  ? document.workExperience[0].position
+                  : 'Not specified'}
               </p>
               
               <h4 className="mt-3 text-sm font-medium text-gray-700">Skills</h4>
-              <div className="mt-1 flex flex-wrap gap-1">
-                {Array.isArray(document.skills) && document.skills.slice(0, 3).map((skill: string, index: number) => (
-    <span
-      key={index}
-      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
-    >
-      {skill}
-    </span>
-  ))}
-  {Array.isArray(document.skills) && document.skills.length > 3 && (
-    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-      +{document.skills.length - 3} more
-    </span>
-  )}
-              </div>
+  <div className="mt-1 flex flex-wrap gap-1">
+    {isResume && Array.isArray((document as Resume).skills) && (document as Resume).skills.slice(0, 3).map((skill: string, index: number) => (
+      <span
+        key={index}
+        className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+      >
+        {skill}
+      </span>
+    ))}
+    {isResume && Array.isArray((document as Resume).skills) && (document as Resume).skills.length > 3 && (
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+        +{(document as Resume).skills.length - 3} more
+      </span>
+    )}
+  </div>
             </>
           ) : (
             <>
               <h4 className="text-sm font-medium text-gray-700">Company</h4>
-              <p className="text-sm text-gray-600">{document.companyName}</p>
+              <p className="text-sm text-gray-600">
+                {'companyName' in document ? document.companyName : ''}
+              </p>
               
               <h4 className="mt-3 text-sm font-medium text-gray-700">Position</h4>
-              <p className="text-sm text-gray-600">{document.jobTitle}</p>
+              <p className="text-sm text-gray-600">
+                {'jobTitle' in document ? document.jobTitle : ''}
+              </p>
             </>
           )}
         </div>

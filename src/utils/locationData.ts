@@ -115,7 +115,7 @@ export const findCountryByCode = (code: string): Country | undefined => {
   return countries.find(country => country.code === code);
 };
 
-export const formatLocation = (city: string, countryCode: string): string => {
-  const country = findCountryByCode(countryCode);
-  return country ? `${city}, ${country.name}` : city;
-};
+// export const formatLocation = (city: string, countryCode: string): string => {
+//   const country = findCountryByCode(countryCode);
+//   return country ? `${city}, ${country.name}` : city;
+// };

@@ -5,7 +5,6 @@ import Navbar from '../components/layout/Navbar';
 import Button from '../components/ui/Button';
 import { FileText, Wand2, Download } from 'lucide-react';
 import { generateCoverLetter as generateCoverLetterApi, updateCoverLetter } from '../utils/axios';
-import { CoverLetter } from '../types';
 import { useParams } from 'react-router-dom';
 import { getCoverLetter } from '../utils/axios';
 import { generateCoverLetterDocx } from '../utils/generateCoverLetterDocx';
@@ -14,18 +13,18 @@ const UpdateCoverLetter: React.FC = () => {
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState<string>();
-  const [showPreview, setShowPreview] = useState(true);
+  const [, setShowPreview] = useState(true);
   const { id } = useParams<{ id: string }>();
   
   const [formData, setFormData] = useState({
-    recipientName: 'David Ken',
-    companyName: 'Google',
-    jobTitle: 'Senior software developer',
-    description: 'I want to work at Google as a senior software developer. I have 5 years of experience in software development, specializing in web applications.',
-    experience: '5 years of experience in software development, specializing in web applications. I have worked with various technologies including React, Node.js, and Python.',
-    customization: 'emphasize my experience with React and Node.js, and how it aligns with the job requirements.',
-    writingTone: 'professional', // professional, friendly, confident
-    applicantName: 'Roman',
+    recipientName: '',
+    companyName: '',
+    jobTitle: '',
+    description: '',
+    experience: '',
+    customization: '',
+    writingTone: '', // professional, friendly, confident
+    applicantName: '',
   });
 
   useEffect(() => {

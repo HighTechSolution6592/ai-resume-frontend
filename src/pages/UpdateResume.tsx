@@ -28,12 +28,13 @@ const UpdateResume: React.FC = () => {
       name: '',
       email: '',
       phone: '',
-      location: '',
+      country: '',
+      city: '',
       website: '',
       linkedin: '',
     },
-    summary: 'I have 5 years of experience in software development, specializing in full-stack web applications. I am proficient in JavaScript, React, Node.js, and have a strong background in Agile methodologies.',
-    description: 'I hope to be hired in software dev team of Sysmic',
+    summary: '',
+    description: '',
     workExperience: [
       {
         id: crypto.randomUUID(),
@@ -315,7 +316,7 @@ const UpdateResume: React.FC = () => {
         <h1 className="text-3xl font-bold tracking-wide uppercase text-gray-900">{formData.personalInfo.name}</h1>
         <p className="text-lg text-gray-700 mt-1">{formData.title}</p>
         <div className="text-sm text-gray-600 mt-2">
-          <p className='mb-2'>{formData.personalInfo.phone}  •  {formData.personalInfo.location}  •  {formData.personalInfo.email}</p>
+          <p className='mb-2'>{formData.personalInfo.phone}  •  {formData.personalInfo.city}, {formData.personalInfo.country}  •  {formData.personalInfo.email}</p>
           <p>
             {formData.personalInfo.linkedin}
             {formData.personalInfo.linkedin && formData.personalInfo.website && '  •  '}
@@ -521,22 +522,7 @@ const UpdateResume: React.FC = () => {
                       required
                     />
                   </div>
-                  
-                  {/* <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Key Achievements
-                    </label>
-                    <p className="text-sm text-gray-500">Enter one achievement per line</p>
-                    <textarea
-                      value={experience.achievements.join('\n')}
-                      onChange={(e) => {
-                        const achievements = e.target.value.split('\n').filter(item => item.trim() !== '');
-                        handleWorkExperienceChange(index, 'achievements', achievements.length ? achievements : ['']);
-                      }}
-                      rows={4}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                    />
-                  </div> */}
+                
                 </div>
               </div>
             ))}
@@ -707,7 +693,6 @@ const UpdateResume: React.FC = () => {
                 onChange={(e) => handleSkillsChange(e.target.value)}
                 rows={6}
                 className="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                placeholder="e.g.\nJavaScript\nReact\nMachine Learning"
               />
             </div>
             

@@ -127,7 +127,7 @@ export const generateResumeDocx = (formData: any) => {
   });
 
   const contactLine1 = new Paragraph({
-    text: `${formData.personalInfo.phone} • ${formData.personalInfo.location} • ${formData.personalInfo.email}`,
+    text: `${formData.personalInfo.phone} • ${formData.personalInfo.city}, ${formData.personalInfo.country} • ${formData.personalInfo.email}`,
     alignment: AlignmentType.CENTER,
     spacing: { after: 40, line: 300 },
   });

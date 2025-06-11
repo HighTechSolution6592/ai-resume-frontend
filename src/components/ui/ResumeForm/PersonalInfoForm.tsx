@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Resume } from '../../../types';
-import { countries, formatLocation } from '../../../utils/locationData';
+import { countries } from '../../../utils/locationData';
 
 type ResumeFormData = Omit<Resume, '_id' | 'userId' | 'type' | 'createdAt' | 'updatedAt'>;
 
@@ -10,8 +10,8 @@ interface PersonalInfoFormProps {
 }
 
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange }) => {
-  const [selectedCountry, setSelectedCountry] = useState('US');
-  const [selectedCity, setSelectedCity] = useState('New York');
+  const [country, setCountry] = useState(formData.personalInfo.country);
+  const [city, setCity] = useState(formData.personalInfo.city);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -19,16 +19,16 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange 
   };
 
   useEffect(() => {
-    if (selectedCity && selectedCountry) {
-      const formattedLocation = formatLocation(selectedCity, selectedCountry);
+    if (city && country) {
       onChange('personalInfo', {
         ...formData.personalInfo,
-        location: formattedLocation
+        city,
+        country
       });
     }
-  }, [selectedCity, selectedCountry]);
+  }, [city, country]);
 
-  const selectedCountryData = countries.find(country => country.code === selectedCountry);
+  const countryData = countries.find(c => c.code === country);
 
   return (
     <div className="space-y-6">
@@ -87,8 +87,8 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange 
             </label>
             <select
               id="country"
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.target.value)}
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
             >
               {countries.map((country) => (
@@ -105,12 +105,12 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange 
             </label>
             <select
               id="city"
-              value={selectedCity}
-              onChange={(e) => setSelectedCity(e.target.value)}
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
               className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
             >
               <option value="">Select a city</option>
-              {selectedCountryData?.cities.map((city) => (
+              {countryData?.cities.map((city) => (
                 <option key={city} value={city}>
                   {city}
                 </option>

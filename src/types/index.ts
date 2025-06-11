@@ -9,14 +9,15 @@ export interface Resume {
   _id: string;
   userId: string;
   title: string;
-  type: 'resume';
+  type: 'resume' | 'coverLetter';
   createdAt: string;
   updatedAt: string;
   personalInfo: {
     name: string;
     email: string;
     phone: string;
-    location: string;
+    country: string;
+    city: string;
     website?: string;
     linkedin?: string;
   };
@@ -38,7 +39,7 @@ export interface CoverLetter {
   applicationDate: string;
   custiomization: string;
   content: string;
-  type: 'coverLetter';
+  type: 'coverLetter' | 'resume';
   writingTone: 'professional' | 'friendly' | 'confident';
   createdAt: string;
   updatedAt: string;

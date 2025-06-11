@@ -5,22 +5,23 @@ import Navbar from '../components/layout/Navbar';
 import Button from '../components/ui/Button';
 import { FileText, Wand2, Download } from 'lucide-react';
 import { generateCoverLetter as generateCoverLetterApi, addCoverLetter } from '../utils/axios';
+import { generateCoverLetterDocx } from '../utils/generateCoverLetterDocx';
 
 const CreateCoverLetter: React.FC = () => {
   const navigate = useNavigate();
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatedContent, setGeneratedContent] = useState('');
-  const [showPreview, setShowPreview] = useState(true);
+  const [, setShowPreview] = useState(true);
   
   const [formData, setFormData] = useState({
-    recipientName: 'David Ken',
-    companyName: 'Google',
-    jobTitle: 'Senior software developer',
-    description: 'I want to work at Google as a senior software developer. I have 5 years of experience in software development, specializing in web applications.',
-    experience: '5 years of experience in software development, specializing in web applications. I have worked with various technologies including React, Node.js, and Python.',
-    customization: 'emphasize my experience with React and Node.js, and how it aligns with the job requirements.',
-    writingTone: 'professional', // professional, friendly, confident
-    applicantName: 'Roman',
+    recipientName: '',
+    companyName: '',
+    jobTitle: '',
+    description: '',
+    experience: '',
+    customization: '',
+    writingTone: '', // professional, friendly, confident
+    applicantName: '',
   });
 
   const generateCoverLetter = async () => {
@@ -53,45 +54,6 @@ const CreateCoverLetter: React.FC = () => {
     }
     
   };
-
-//   const handleSubmit = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     setIsGenerating(true);
-
-//     try {
-//       // In a real app, this would call an AI API endpoint
-//       // Example API call structure:
-//       // const response = await fetch('/api/generate-cover-letter', {
-//       //   method: 'POST',
-//       //   headers: { 'Content-Type': 'application/json' },
-//       //   body: JSON.stringify(formData)
-//       // });
-//       // const data = await response.json();
-//       // setGeneratedContent(data.content);
-
-//       // Simulate API call
-//       await new Promise(resolve => setTimeout(resolve, 2000));
-
-//       // Simulate generated content
-//       const mockGeneratedContent = `Dear ${formData.recipientName || 'Hiring Manager'},
-
-// I am writing to express my strong interest in the ${formData.jobTitle} position at ${formData.companyName}. With my background in ${formData.relevantExperience.split('.')[0]}, I am confident in my ability to contribute effectively to your team.
-
-// [AI-generated content would be inserted here based on job description and experience]
-
-// Thank you for considering my application. I look forward to discussing how I can contribute to ${formData.companyName}'s success.
-
-// Best regards,
-//   ${formData.applicantName}`;
-
-//       setGeneratedContent(mockGeneratedContent);
-//       toast.success('Cover letter generated successfully!');
-//     } catch (error) {
-//       toast.error('Failed to generate cover letter. Please try again.');
-//     } finally {
-//       setIsGenerating(false);
-//     }
-//   };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -260,10 +222,7 @@ const CreateCoverLetter: React.FC = () => {
                   <div className="mt-4 flex justify-end space-x-4">
                     <Button
                       variant="outline"
-                      onClick={() => {
-                        // In a real app, this would download as PDF
-                        toast.success('Cover letter downloaded as PDF');
-                      }}
+                      onClick={() => generateCoverLetterDocx(generatedContent) }
                       icon={<Download className="h-4 w-4" />}
                     >
                       Download

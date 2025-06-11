@@ -2,13 +2,11 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import Button from '../components/ui/Button';
-import { FileText, FileCheck, CheckCircle, BarChart, Github, Linkedin, Facebook, Calendar, PenTool } from 'lucide-react';
-import { toast } from 'sonner';
+import { FileText, CheckCircle, Github, Linkedin, Facebook, Calendar, PenTool } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const LandingPage: React.FC = () => {
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -20,12 +18,6 @@ const LandingPage: React.FC = () => {
               <FileText className="h-8 w-8 text-primary-600" />
               <span className="ml-2 text-xl font-bold text-gray-900">ResumePilot</span>
             </div>
-            {/* <nav className="hidden md:flex space-x-8">
-              <Link to="/resumes" className="text-gray-600 hover:text-gray-900">Resumes</Link>
-              <Link to="/cover-letters" className="text-gray-600 hover:text-gray-900">Cover Letters</Link>
-              <Link to="/cvs" className="text-gray-600 hover:text-gray-900">CVs</Link>
-              <Link to="/resources" className="text-gray-600 hover:text-gray-900">Resources</Link>
-            </nav> */}
             <div>
               {isAuthenticated ? (
                 <Link to="/dashboard">
