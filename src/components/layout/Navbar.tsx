@@ -102,9 +102,9 @@ const Navbar: React.FC = () => {
                   />
                   <div className="flex flex-col items-start">
                     <span className="text-gray-700">{user?.name}</span>
-                    {user && !user.isEmailVerified && (
+                    {/* {user && !user.isEmailVerified && (
                       <span className="text-xs text-red-500 font-medium">Unverified</span>
-                    )}
+                    )} */}
                   </div>
                 </button>
 

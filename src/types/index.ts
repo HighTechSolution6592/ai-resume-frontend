@@ -1,8 +1,11 @@
 export interface User {
   id: string;
-  name: string;
-  email: string;
-  avatarUrl?: string;
+	name: string;
+	email: string;
+	avatarUrl?: string;
+	isEmailVerified?: boolean;
+	registration_method?: "manual" | "google" | "facebook" | "linkedin";
+	hasPassword?: boolean;
 }
 
 export interface Resume {
