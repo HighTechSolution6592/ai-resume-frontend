@@ -33,15 +33,15 @@ const Navbar: React.FC = () => {
 
           {/* Desktop navigation */}
           <div className="hidden md:flex md:items-center md:space-x-8">
-            {/* {isAuthenticated ? (
+            {isAuthenticated ? (
               <>
                 <Link 
-                  to="/resumes" 
+                  to="/dashboard" 
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
-                  Resumes
+                  Dashboard
                 </Link>
-                <Link 
+                {/* <Link 
                   to="/cover-letters" 
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
@@ -58,7 +58,7 @@ const Navbar: React.FC = () => {
                   className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
                 >
                   Resources
-                </Link>
+                </Link> */}
               </>
             ) : (
               <>
@@ -87,7 +87,7 @@ const Navbar: React.FC = () => {
                   Resources
                 </Link>
               </>
-            )} */}
+            )}
             
             {isAuthenticated ? (
               <div className="relative">

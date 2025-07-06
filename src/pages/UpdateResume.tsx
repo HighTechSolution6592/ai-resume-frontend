@@ -7,10 +7,12 @@ import PersonalInfoForm from '../components/ui/ResumeForm/PersonalInfoForm';
 import { Resume } from '../types';
 import { useParams } from 'react-router-dom';
 import { generateResumeDocx } from '../utils/generateResumeDocx';
-type ResumeFormData = Omit<Resume, '_id' | 'userId' | 'type' | 'createdAt' | 'updatedAt'>;
 import { FileText, Save, Download, Wand2 } from 'lucide-react';
-import { improveSummary, updateResume, getResume } from '../utils/axios';
+import { improveSummary, improveResponsibility, updateResume, getResume } from '../utils/axios';
 import { formatMonthYear } from '../utils/cn';
+import { countries } from '../utils/locationData';
+type ResumeFormData = Omit<Resume, '_id' | 'userId' | 'type' | 'createdAt' | 'updatedAt'>;
+
 // import jsPDF from 'jspdf';
 // import html2canvas from 'html2canvas';
 // import { saveAs } from 'file-saver';
@@ -23,12 +25,13 @@ const UpdateResume: React.FC = () => {
   const [showPreview, setShowPreview] = useState(true);
   const { id } = useParams<{ id: string }>();
   const [formData, setFormData] = useState<ResumeFormData>({
-    title: "",
+    title: '',
     personalInfo: {
       name: '',
       email: '',
       phone: '',
       country: '',
+      state: '',
       city: '',
       website: '',
       linkedin: '',
@@ -43,10 +46,12 @@ const UpdateResume: React.FC = () => {
         startDate: '',
         endDate: '',
         isCurrent: false,
-        location: '',
+        country: '',
+        state: '',
+        city: '',
         description: ''
         // achievements: [''],
-      },
+      }
     ],
     education: [
       {
@@ -57,7 +62,9 @@ const UpdateResume: React.FC = () => {
         startDate: '',
         endDate: '',
         isCurrent: false,
-        location: '',
+        country: '',
+        state: '',
+        city: '',
         gpa: '',
       },
     ],
@@ -73,6 +80,9 @@ const UpdateResume: React.FC = () => {
       }
     ]
   });
+
+  const [, setState] = useState('');
+  const [, setCity] = useState('');
 
   useEffect(() => {
     // If an ID is provided, fetch the existing resume data
@@ -110,7 +120,9 @@ const UpdateResume: React.FC = () => {
           startDate: '',
           endDate: '',
           isCurrent: false,
-          location: '',
+          country: '',
+          state: '',
+          city: '',
           description: '',
           // achievements: [''],
         },
@@ -155,7 +167,9 @@ const UpdateResume: React.FC = () => {
           startDate: '',
           endDate: '',
           isCurrent: false,
-          location: '',
+          country: '',
+          state: '',
+          city: '',
           gpa: '',
         },
       ],
@@ -309,6 +323,30 @@ const UpdateResume: React.FC = () => {
     
   };
 
+  const generateResponsibility = async () => {
+    setIsGenerating(true);
+
+    try {
+      const responsibilityResult = await improveResponsibility(formData.workExperience);
+      const updatedWorkExperience = formData.workExperience.map((exp, idx) => ({
+        ...exp,
+        description: responsibilityResult[idx] || exp.description,
+      }));
+
+      setFormData({
+        ...formData,
+        workExperience: updatedWorkExperience,
+      });
+      toast.success('Responsibilities generated successfully!');
+      setShowPreview(true);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to generate responsibilities');
+    } finally {
+        setIsGenerating(false);
+    }
+  };
+
   // Preview component
   const ResumePreview = () => (
     <div className="bg-white p-10 rounded-2xl shadow-md max-w-2xl mx-auto font-serif" id="resume-preview">
@@ -340,7 +378,7 @@ const UpdateResume: React.FC = () => {
               <h3 className="text-md font-bold text-gray-900">{exp.position}</h3>
               <span className="text-sm text-gray-600">{formatMonthYear(exp.startDate)} - {exp.isCurrent ? 'Present' : formatMonthYear(exp.endDate || '')}</span>
             </div>
-            <p className="italic text-sm text-gray-700">{exp.companyName} - {exp.location}</p>
+            <p className="italic text-sm text-gray-700">{exp.companyName} - {exp.city}, {exp.country} </p>
             <p className="text-sm text-gray-800 mt-1 leading-relaxed">{exp.description}</p>
           </div>
         ))}
@@ -354,7 +392,7 @@ const UpdateResume: React.FC = () => {
               <h3 className="text-md font-bold text-gray-900">{edu.degree}</h3>
               <span className="text-sm text-gray-600">{formatMonthYear(edu.startDate)} - {edu.isCurrent ? 'Present' : formatMonthYear(edu.endDate || '')}</span>
             </div>
-            <p className="italic text-sm text-gray-700">{edu.institution} - {edu.location}</p>
+            <p className="italic text-sm text-gray-700">{edu.institution} - {edu.city}, {edu.country}</p>
             {edu.gpa && <p className="text-sm text-gray-600">GPA: {edu.gpa}</p>}
           </div>
         ))}
@@ -384,7 +422,6 @@ const UpdateResume: React.FC = () => {
     </div>
   );
 
-
   // Render form steps
   const renderStep = () => {
     switch (currentStep) {
@@ -413,119 +450,182 @@ const UpdateResume: React.FC = () => {
           <div className="space-y-6">
             <h3 className="text-lg font-medium text-gray-900">Work Experience</h3>
             
-            {formData.workExperience.map((experience, index) => (
-              <div key={experience.id} className="p-4 border border-gray-200 rounded-md bg-white">
-                <div className="flex justify-between items-center mb-4">
-                  <h4 className="text-md font-medium">
-                    Experience #{index + 1}
-                  </h4>
-                  {formData.workExperience.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeWorkExperience(index)}
-                      className="text-error-600 hover:text-error-800 text-sm"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
+            {formData.workExperience.map((experience, index) => {
+              const countryData = countries.find(c => c.code === experience.country);
+              const stateOptions = countryData ? [...new Set(countryData.cities.map(c => c.state))] : [];
+              const cityOptions = countryData ? countryData.cities.filter(c => c.state === experience.state).map(c => c.name) : [];
+              return (
+                <div key={experience.id} className="p-4 border border-gray-200 rounded-md bg-white">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-md font-medium">
+                      Experience #{index + 1}
+                    </h4>
+                    {formData.workExperience.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeWorkExperience(index)}
+                        className="text-error-600 hover:text-error-800 text-sm"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Company Name *
-                    </label>
-                    <input
-                      type="text"
-                      value={experience.companyName}
-                      onChange={(e) => handleWorkExperienceChange(index, 'companyName', e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Position *
-                    </label>
-                    <input
-                      type="text"
-                      value={experience.position}
-                      onChange={(e) => handleWorkExperienceChange(index, 'position', e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Start Date *
-                    </label>
-                    <input
-                      type="date"
-                      value={experience.startDate}
-                      onChange={(e) => handleWorkExperienceChange(index, 'startDate', e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        End Date
+                        Company Name *
                       </label>
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id={`current-job-${index}`}
-                          checked={experience.isCurrent}
-                          onChange={(e) => handleWorkExperienceChange(index, 'isCurrent', e.target.checked)}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor={`current-job-${index}`} className="ml-2 text-sm text-gray-700">
-                          Current Job
-                        </label>
-                      </div>
+                      <input
+                        type="text"
+                        value={experience.companyName}
+                        onChange={(e) => handleWorkExperienceChange(index, 'companyName', e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                        required
+                      />
                     </div>
-                    <input
-                      type="date"
-                      value={experience.endDate || ''}
-                      onChange={(e) => handleWorkExperienceChange(index, 'endDate', e.target.value)}
-                      disabled={experience.isCurrent}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-400"
-                    />
-                  </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Position *
+                      </label>
+                      <input
+                        type="text"
+                        value={experience.position}
+                        onChange={(e) => handleWorkExperienceChange(index, 'position', e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Start Date *
+                      </label>
+                      <input
+                        type="date"
+                        value={experience.startDate.slice(0, 10)}
+                        onChange={(e) => handleWorkExperienceChange(index, 'startDate', e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                        required
+                      />
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <label className="block text-sm font-medium text-gray-700">
+                          End Date
+                        </label>
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id={`current-job-${index}`}
+                            checked={experience.isCurrent}
+                            onChange={(e) => handleWorkExperienceChange(index, 'isCurrent', e.target.checked)}
+                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                          />
+                          <label htmlFor={`current-job-${index}`} className="ml-2 text-sm text-gray-700">
+                            Current Job
+                          </label>
+                        </div>
+                      </div>
+                      <input
+                        type="date"
+                        value={experience.endDate ? experience.endDate.slice(0, 10) : ''}
+                        onChange={(e) => handleWorkExperienceChange(index, 'endDate', e.target.value)}
+                        disabled={experience.isCurrent}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-400"
+                      />
+                    </div>
+
+                    {/* Country */}
+                    <div>
+                      <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+                        Country *
+                      </label>
+                      <select
+                        id="country"
+                        value={experience.country}
+                        onChange={(e) => {
+                          handleWorkExperienceChange(index, 'country', e.target.value)
+                        }}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                      >
+                        <option value="">Select a country</option>
+                        {countries.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    {/* State */}
+                    <div>
+                      <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+                        State/Province *
+                      </label>
+                      <select
+                        id="state"
+                        value={experience.state}
+                        onChange={(e) => {
+                          setState(e.target.value);
+                          setCity('');
+                          handleWorkExperienceChange(index, 'state', e.target.value)
+                        }}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                        disabled={!stateOptions.length}
+                      >
+                        <option value="">Select a state</option>
+                        {stateOptions.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* City */}
+                    <div>
+                      <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                        City *
+                      </label>
+                      <select
+                        id="city"
+                        value={experience.city}
+                        onChange={(e) => {
+                          setCity(e.target.value);
+                          handleWorkExperienceChange(index, 'city', e.target.value);
+                        }}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                        disabled={!cityOptions.length}
+                      >
+                        <option value="">Select a city</option>
+                        {cityOptions.map((cityName) => (
+                          <option key={cityName} value={cityName}>
+                            {cityName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    
+                    <div className="sm:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700">
+                        Responsibility *
+                      </label>
+                      <textarea
+                        value={experience.description}
+                        onChange={(e) => handleWorkExperienceChange(index, 'description', e.target.value)}
+                        rows={3}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                        required
+                      />
+                    </div>
                   
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      value={experience.location || ''}
-                      onChange={(e) => handleWorkExperienceChange(index, 'location', e.target.value)}
-                      placeholder="City, State"
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                    />
                   </div>
-                  
-                  <div className="sm:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">
-                      Job Description *
-                    </label>
-                    <textarea
-                      value={experience.description}
-                      onChange={(e) => handleWorkExperienceChange(index, 'description', e.target.value)}
-                      rows={3}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                      required
-                    />
-                  </div>
-                
                 </div>
-              </div>
-            ))}
+              )
+            })}
             
             <div>
               <Button
@@ -543,131 +643,183 @@ const UpdateResume: React.FC = () => {
         return (
           <div className="space-y-6">
             <h3 className="text-lg font-medium text-gray-900">Education</h3>
-            
-            {formData.education.map((edu, index) => (
-              <div key={edu.id} className="p-4 border border-gray-200 rounded-md bg-white">
-                <div className="flex justify-between items-center mb-4">
-                  <h4 className="text-md font-medium">
-                    Education #{index + 1}
-                  </h4>
-                  {formData.education.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeEducation(index)}
-                      className="text-error-600 hover:text-error-800 text-sm"
-                    >
-                      Remove
-                    </button>
-                  )}
-                </div>
-                
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Institution *
-                    </label>
-                    <input
-                      type="text"
-                      value={edu.institution}
-                      onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                      required
-                    />
+            {formData.education.map((edu, index) => {
+              const countryData = countries.find(c => c.code === edu.country);
+              const stateOptions = countryData ? [...new Set(countryData.cities.map(c => c.state))] : [];
+              const cityOptions = countryData ? countryData.cities.filter(c => c.state === edu.state).map(c => c.name) : [];
+              return (
+                <div key={edu.id} className="p-4 border border-gray-200 rounded-md bg-white">
+                  <div className="flex justify-between items-center mb-4">
+                    <h4 className="text-md font-medium">
+                      Education #{index + 1}
+                    </h4>
+                    {formData.education.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeEducation(index)}
+                        className="text-error-600 hover:text-error-800 text-sm"
+                      >
+                        Remove
+                      </button>
+                    )}
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Degree *
-                    </label>
-                    <input
-                      type="text"
-                      value={edu.degree}
-                      onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Field of Study
-                    </label>
-                    <input
-                      type="text"
-                      value={edu.fieldOfStudy || ''}
-                      onChange={(e) => handleEducationChange(index, 'fieldOfStudy', e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Start Date *
-                    </label>
-                    <input
-                      type="date"
-                      value={edu.startDate}
-                      onChange={(e) => handleEducationChange(index, 'startDate', e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                      required
-                    />
-                  </div>
-                  
-                  <div>
-                    <div className="flex items-center justify-between">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <div>
                       <label className="block text-sm font-medium text-gray-700">
-                        End Date
+                        Institution *
                       </label>
-                      <div className="flex items-center">
-                        <input
-                          type="checkbox"
-                          id={`current-education-${index}`}
-                          checked={edu.isCurrent}
-                          onChange={(e) => handleEducationChange(index, 'isCurrent', e.target.checked)}
-                          className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-                        />
-                        <label htmlFor={`current-education-${index}`} className="ml-2 text-sm text-gray-700">
-                          Current Student
-                        </label>
-                      </div>
+                      <input
+                        type="text"
+                        value={edu.institution}
+                        onChange={(e) => handleEducationChange(index, 'institution', e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                        required
+                      />
                     </div>
-                    <input
-                      type="date"
-                      value={edu.endDate || ''}
-                      onChange={(e) => handleEducationChange(index, 'endDate', e.target.value)}
-                      disabled={edu.isCurrent}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-400"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      Location
-                    </label>
-                    <input
-                      type="text"
-                      value={edu.location || ''}
-                      onChange={(e) => handleEducationChange(index, 'location', e.target.value)}
-                      placeholder="City, State"
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">
-                      GPA
-                    </label>
-                    <input
-                      type="text"
-                      value={edu.gpa || ''}
-                      onChange={(e) => handleEducationChange(index, 'gpa', e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Degree *
+                      </label>
+                      <input
+                        type="text"
+                        value={edu.degree}
+                        onChange={(e) => handleEducationChange(index, 'degree', e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Field of Study
+                      </label>
+                      <input
+                        type="text"
+                        value={edu.fieldOfStudy || ''}
+                        onChange={(e) => handleEducationChange(index, 'fieldOfStudy', e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        Start Date *
+                      </label>
+                      <input
+                        type="date"
+                        value={edu.startDate.slice(0, 10)}
+                        onChange={(e) => handleEducationChange(index, 'startDate', e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <div className="flex items-center justify-between">
+                        <label className="block text-sm font-medium text-gray-700">
+                          End Date
+                        </label>
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id={`current-education-${index}`}
+                            checked={edu.isCurrent}
+                            onChange={(e) => handleEducationChange(index, 'isCurrent', e.target.checked)}
+                            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                          />
+                          <label htmlFor={`current-education-${index}`} className="ml-2 text-sm text-gray-700">
+                            Current Student
+                          </label>
+                        </div>
+                      </div>
+                      <input
+                        type="date"
+                        value={edu.endDate ? edu.endDate.slice(0, 10) : ''}
+                        onChange={(e) => handleEducationChange(index, 'endDate', e.target.value)}
+                        disabled={edu.isCurrent}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500 disabled:bg-gray-100 disabled:text-gray-400"
+                      />
+                    </div>
+                    {/* Country */}
+                    <div>
+                      <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+                        Country *
+                      </label>
+                      <select
+                        id="country"
+                        value={edu.country}
+                        onChange={(e) => {
+                          handleEducationChange(index, 'country', e.target.value)
+                        }}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                      >
+                        <option value="">Select a country</option>
+                        {countries.map((c) => (
+                          <option key={c.code} value={c.code}>
+                            {c.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {/* State */}
+                    <div>
+                      <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+                        State/Province *
+                      </label>
+                      <select
+                        id="state"
+                        value={edu.state}
+                        onChange={(e) => {
+                          setState(e.target.value);
+                          setCity('');
+                          handleEducationChange(index, 'state', e.target.value)
+                        }}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                        disabled={!stateOptions.length}
+                      >
+                        <option value="">Select a state</option>
+                        {stateOptions.map((s) => (
+                          <option key={s} value={s}>
+                            {s}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    {/* City */}
+                    <div>
+                      <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+                        City *
+                      </label>
+                      <select
+                        id="city"
+                        value={edu.city}
+                        onChange={(e) => {
+                          setCity(e.target.value);
+                          handleEducationChange(index, 'city', e.target.value);
+                        }}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+                        disabled={!cityOptions.length}
+                      >
+                        <option value="">Select a city</option>
+                        {cityOptions.map((cityName) => (
+                          <option key={cityName} value={cityName}>
+                            {cityName}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700">
+                        GPA
+                      </label>
+                      <input
+                        type="text"
+                        value={edu.gpa || ''}
+                        onChange={(e) => handleEducationChange(index, 'gpa', e.target.value)}
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-            
+              );
+            })}
             <div>
               <Button
                 type="button"
@@ -748,7 +900,7 @@ const UpdateResume: React.FC = () => {
                         </label>
                         <input
                           type="date"
-                          value={cert.issueDate || ''}
+                          value={cert.issueDate ? cert.issueDate.slice(0, 10) : ''}
                           onChange={(e) => handleCertificationChange(index, 'issueDate', e.target.value)}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                         />
@@ -760,7 +912,7 @@ const UpdateResume: React.FC = () => {
                         </label>
                         <input
                           type="date"
-                          value={cert.expiryDate || ''}
+                          value={cert.expiryDate?.slice(0, 10) || ''}
                           onChange={(e) => handleCertificationChange(index, 'expiryDate', e.target.value)}
                           className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
                         />
@@ -812,16 +964,16 @@ const UpdateResume: React.FC = () => {
             />
             
             <div className="mt-6">
-              <h3 className="text-lg font-medium text-gray-900">Job Description</h3>
+              <h3 className="text-lg font-medium text-gray-900">Responsibility</h3>
               <p className="text-sm text-gray-500 mt-1">
-                Paste the job description you're applying for to help our AI tailor your resume.
+                Paste the responsibility you're applying for to help our AI tailor your resume.
               </p>
               <textarea
                 value={formData.description}
                 onChange={(e) =>handleFormChange('description', e.target.value)}
                 rows={8}
                 className="mt-2 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                placeholder="Paste the job description here..."
+                placeholder="Paste the responsibility here..."
               />
             </div>
           </div>
@@ -846,7 +998,22 @@ const UpdateResume: React.FC = () => {
             </Button>
           )}
         </div>
-        
+
+        {
+          currentStep == 2 && (
+            <Button
+              type="button"
+              variant='outline'
+              onClick={generateResponsibility}
+              isLoading={isGenerating}
+              disabled={isGenerating}
+              icon={<Wand2 className="h-4 w-4" />}
+            >
+              Generate responsibility with AI
+            </Button>
+          )
+        }
+
         <div className="flex gap-3">
           {currentStep < 5 ? (
             <Button

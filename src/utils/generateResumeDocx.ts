@@ -161,7 +161,7 @@ export const generateResumeDocx = (formData: any) => {
         new Paragraph({
           children: [
             new TextRun({
-              text: `${exp.companyName} - ${exp.location}`,
+              text: `${exp.companyName} - ${exp.city}, ${exp.country}`,
               italics: true,
               color: "000000",
             }),
@@ -188,7 +188,7 @@ export const generateResumeDocx = (formData: any) => {
         new Paragraph({
           children: [
             new TextRun({
-              text: `${edu.institution} - ${edu.location}`,
+              text: `${edu.institution} - ${edu.city}, ${edu.country}`,
               italics: true,
               color: "000000",
             }),

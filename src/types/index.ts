@@ -20,6 +20,7 @@ export interface Resume {
     email: string;
     phone: string;
     country: string;
+    state: string;
     city: string;
     website?: string;
     linkedin?: string;
@@ -55,7 +56,9 @@ export interface WorkExperience {
   startDate: string;
   endDate?: string;
   isCurrent?: boolean;
-  location?: string;
+  country: string;
+  state: string;
+  city: string;
   description: string;
   // achievements: string[];
 }
@@ -68,7 +71,9 @@ export interface Education {
   startDate: string;
   endDate?: string;
   isCurrent?: boolean;
-  location?: string;
+  country: string;
+  state: string;
+  city: string;
   gpa?: string;
 }
 

@@ -16,6 +16,16 @@ export const improveSummary = async (summary: String, description: String) => {
   }
 }
 
+export const improveResponsibility = async (workExperience: Array<any>) => {
+  try {
+    const response = await axios.post(backend_url + '/resume/improve-responsibility', { workExperience });
+    return response.data;
+  } catch (error: any) {
+    console.error("Error improving responsibility:", error);
+    throw error;
+  }
+}
+
 export const getAllResume = async () => { 
   try {
     const response = await axios.post(backend_url + '/resume/all', {userEmail: getUserEmail()});

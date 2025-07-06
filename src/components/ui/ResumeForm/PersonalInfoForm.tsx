@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Resume } from '../../../types';
 import { countries } from '../../../utils/locationData';
 
@@ -10,30 +10,28 @@ interface PersonalInfoFormProps {
 }
 
 const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange }) => {
-  const [country, setCountry] = useState(formData.personalInfo.country);
-  const [city, setCity] = useState(formData.personalInfo.city);
+  // Use only formData.personalInfo for values and updates
+  const country = formData.personalInfo.country || '';
+  const state = formData.personalInfo.state || '';
+  const city = formData.personalInfo.city || '';
+
+  const countryData = countries.find(c => c.code === country);
+  const stateOptions = countryData
+    ? [...new Set(countryData.cities.map(c => c.state))]
+    : [];
+
+  const cityOptions = countryData
+    ? countryData.cities.filter(c => c.state === state).map(c => c.name)
+    : [];
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     onChange('personalInfo', { ...formData.personalInfo, [name]: value });
   };
 
-  useEffect(() => {
-    if (city && country) {
-      onChange('personalInfo', {
-        ...formData.personalInfo,
-        city,
-        country
-      });
-    }
-  }, [city, country]);
-
-  const countryData = countries.find(c => c.code === country);
-
   return (
     <div className="space-y-6">
       <h3 className="text-lg font-medium text-gray-900">Personal Information</h3>
-      
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
@@ -46,10 +44,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange 
             value={formData.personalInfo.name}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
           />
         </div>
-        
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email Address *
@@ -61,10 +58,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange 
             value={formData.personalInfo.email}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
           />
         </div>
-        
         <div>
           <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
             Phone Number *
@@ -76,49 +72,81 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange 
             value={formData.personalInfo.phone}
             onChange={handleChange}
             required
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
           />
         </div>
-        
-        <div className="space-y-4">
-          <div>
-            <label htmlFor="country" className="block text-sm font-medium text-gray-700">
-              Country *
-            </label>
-            <select
-              id="country"
-              value={country}
-              onChange={(e) => setCountry(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-            >
-              {countries.map((country) => (
-                <option key={country.code} value={country.code}>
-                  {country.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-              City *
-            </label>
-            <select
-              id="city"
-              value={city}
-              onChange={(e) => setCity(e.target.value)}
-              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-            >
-              <option value="">Select a city</option>
-              {countryData?.cities.map((city) => (
-                <option key={city} value={city}>
-                  {city}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Country */}
+        <div>
+          <label htmlFor="country" className="block text-sm font-medium text-gray-700">
+            Country *
+          </label>
+          <select
+            id="country"
+            value={country}
+            onChange={e => {
+              onChange('personalInfo', {
+                ...formData.personalInfo,
+                country: e.target.value,
+                state: '',
+                city: ''
+              });
+            }}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+          >
+            <option value="">Select a country</option>
+            {countries.map((c) => (
+              <option key={c.code} value={c.code}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </div>
-        
+        {/* State */}
+        <div>
+          <label htmlFor="state" className="block text-sm font-medium text-gray-700">
+            State/Province *
+          </label>
+          <select
+            id="state"
+            value={state}
+            onChange={e => {
+              onChange('personalInfo', {
+                ...formData.personalInfo,
+                state: e.target.value,
+                city: ''
+              });
+            }}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+            disabled={!stateOptions.length}
+          >
+            <option value="">Select a state</option>
+            {stateOptions.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </div>
+        {/* City */}
+        <div>
+          <label htmlFor="city" className="block text-sm font-medium text-gray-700">
+            City *
+          </label>
+          <select
+            id="city"
+            value={city}
+            onChange={e => onChange('personalInfo', { ...formData.personalInfo, city: e.target.value })}
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
+            disabled={!cityOptions.length}
+          >
+            <option value="">Select a city</option>
+            {cityOptions.map((cityName) => (
+              <option key={cityName} value={cityName}>
+                {cityName}
+              </option>
+            ))}
+          </select>
+        </div>
         <div>
           <label htmlFor="linkedin" className="block text-sm font-medium text-gray-700">
             LinkedIn URL
@@ -130,10 +158,9 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange 
             value={formData.personalInfo.linkedin || ''}
             onChange={handleChange}
             placeholder="linkedin.com/in/yourprofile"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
           />
         </div>
-        
         <div>
           <label htmlFor="website" className="block text-sm font-medium text-gray-700">
             Personal Website
@@ -145,7 +172,7 @@ const PersonalInfoForm: React.FC<PersonalInfoFormProps> = ({ formData, onChange 
             value={formData.personalInfo.website || ''}
             onChange={handleChange}
             placeholder="https://yourwebsite.com"
-            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
+            className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm"
           />
         </div>
       </div>

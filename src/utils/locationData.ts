@@ -1,121 +1,26 @@
-export interface Country {
+export interface City {
   name: string;
+  state: string;
+}
+
+export interface Country {
   code: string;
-  cities: string[];
+  name: string;
+  cities: City[];
 }
 
 export const countries: Country[] = [
   {
-    name: "United States",
     code: "US",
-    cities: [
-      "New York",
-      "Los Angeles",
-      "Chicago",
-      "Houston",
-      "Phoenix",
-      "Philadelphia",
-      "San Antonio",
-      "San Diego",
-      "Dallas",
-      "San Jose",
-      "Austin",
-      "San Francisco",
-      "Seattle",
-      "Denver",
-      "Boston",
-      "Miami",
-      "Atlanta",
-      "Portland",
-      "Washington DC",
-      "Las Vegas"
-    ]
+    name: "United States",
+    cities: [{ name: "Birmingham", state: "Alabama" }, { name: "Montgomery", state: "Alabama" }, { name: "Huntsville", state: "Alabama" }, { name: "Mobile", state: "Alabama" }, { name: "Tuscaloosa", state: "Alabama" }, { name: "Anchorage", state: "Alaska" }, { name: "Fairbanks", state: "Alaska" }, { name: "Juneau", state: "Alaska" }, { name: "Sitka", state: "Alaska" }, { name: "Ketchikan", state: "Alaska" }, { name: "Phoenix", state: "Arizona" }, { name: "Tucson", state: "Arizona" }, { name: "Mesa", state: "Arizona" }, { name: "Chandler", state: "Arizona" }, { name: "Glendale", state: "Arizona" }, { name: "Little Rock", state: "Arkansas" }, { name: "Fort Smith", state: "Arkansas" }, { name: "Fayetteville", state: "Arkansas" }, { name: "Springdale", state: "Arkansas" }, { name: "Jonesboro", state: "Arkansas" }, { name: "Los Angeles", state: "California" }, { name: "San Diego", state: "California" }, { name: "San Jose", state: "California" }, { name: "San Francisco", state: "California" }, { name: "Fresno", state: "California" }, { name: "Denver", state: "Colorado" }, { name: "Colorado Springs", state: "Colorado" }, { name: "Aurora", state: "Colorado" }, { name: "Fort Collins", state: "Colorado" }, { name: "Lakewood", state: "Colorado" }, { name: "Bridgeport", state: "Connecticut" }, { name: "New Haven", state: "Connecticut" }, { name: "Stamford", state: "Connecticut" }, { name: "Hartford", state: "Connecticut" }, { name: "Waterbury", state: "Connecticut" }, { name: "Wilmington", state: "Delaware" }, { name: "Dover", state: "Delaware" }, { name: "Newark", state: "Delaware" }, { name: "Middletown", state: "Delaware" }, { name: "Smyrna", state: "Delaware" }, { name: "Jacksonville", state: "Florida" }, { name: "Miami", state: "Florida" }, { name: "Tampa", state: "Florida" }, { name: "Orlando", state: "Florida" }, { name: "St. Petersburg", state: "Florida" }, { name: "Atlanta", state: "Georgia" }, { name: "Augusta", state: "Georgia" }, { name: "Columbus", state: "Georgia" }, { name: "Macon", state: "Georgia" }, { name: "Savannah", state: "Georgia" }, { name: "Honolulu", state: "Hawaii" }, { name: "Hilo", state: "Hawaii" }, { name: "Kailua", state: "Hawaii" }, { name: "Kapolei", state: "Hawaii" }, { name: "Waipahu", state: "Hawaii" }, { name: "Boise", state: "Idaho" }, { name: "Meridian", state: "Idaho" }, { name: "Nampa", state: "Idaho" }, { name: "Idaho Falls", state: "Idaho" }, { name: "Pocatello", state: "Idaho" }, { name: "Chicago", state: "Illinois" }, { name: "Aurora", state: "Illinois" }, { name: "Naperville", state: "Illinois" }, { name: "Joliet", state: "Illinois" }, { name: "Rockford", state: "Illinois" }, { name: "Indianapolis", state: "Indiana" }, { name: "Fort Wayne", state: "Indiana" }, { name: "Evansville", state: "Indiana" }, { name: "South Bend", state: "Indiana" }, { name: "Carmel", state: "Indiana" }, { name: "Des Moines", state: "Iowa" }, { name: "Cedar Rapids", state: "Iowa" }, { name: "Davenport", state: "Iowa" }, { name: "Sioux City", state: "Iowa" }, { name: "Iowa City", state: "Iowa" }, { name: "Wichita", state: "Kansas" }, { name: "Overland Park", state: "Kansas" }, { name: "Kansas City", state: "Kansas" }, { name: "Olathe", state: "Kansas" }, { name: "Topeka", state: "Kansas" }, { name: "Louisville", state: "Kentucky" }, { name: "Lexington", state: "Kentucky" }, { name: "Bowling Green", state: "Kentucky" }, { name: "Owensboro", state: "Kentucky" }, { name: "Covington", state: "Kentucky" }, { name: "New Orleans", state: "Louisiana" }, { name: "Baton Rouge", state: "Louisiana" }, { name: "Shreveport", state: "Louisiana" }, { name: "Lafayette", state: "Louisiana" }, { name: "Lake Charles", state: "Louisiana" }, { name: "Portland", state: "Maine" }, { name: "Lewiston", state: "Maine" }, { name: "Bangor", state: "Maine" }, { name: "South Portland", state: "Maine" }, { name: "Auburn", state: "Maine" }, { name: "Baltimore", state: "Maryland" }, { name: "Columbia", state: "Maryland" }, { name: "Germantown", state: "Maryland" }, { name: "Silver Spring", state: "Maryland" }, { name: "Frederick", state: "Maryland" }, { name: "Boston", state: "Massachusetts" }, { name: "Worcester", state: "Massachusetts" }, { name: "Springfield", state: "Massachusetts" }, { name: "Lowell", state: "Massachusetts" }, { name: "Cambridge", state: "Massachusetts" }, { name: "Detroit", state: "Michigan" }, { name: "Grand Rapids", state: "Michigan" }, { name: "Warren", state: "Michigan" }, { name: "Sterling Heights", state: "Michigan" }, { name: "Ann Arbor", state: "Michigan" }, { name: "Minneapolis", state: "Minnesota" }, { name: "St. Paul", state: "Minnesota" }, { name: "Rochester", state: "Minnesota" }, { name: "Duluth", state: "Minnesota" }, { name: "Bloomington", state: "Minnesota" }, { name: "Jackson", state: "Mississippi" }, { name: "Gulfport", state: "Mississippi" }, { name: "Southaven", state: "Mississippi" }, { name: "Hattiesburg", state: "Mississippi" }, { name: "Biloxi", state: "Mississippi" }, { name: "Kansas City", state: "Missouri" }, { name: "St. Louis", state: "Missouri" }, { name: "Springfield", state: "Missouri" }, { name: "Columbia", state: "Missouri" }, { name: "Independence", state: "Missouri" }, { name: "Billings", state: "Montana" }, { name: "Missoula", state: "Montana" }, { name: "Great Falls", state: "Montana" }, { name: "Bozeman", state: "Montana" }, { name: "Butte", state: "Montana" }, { name: "Omaha", state: "Nebraska" }, { name: "Lincoln", state: "Nebraska" }, { name: "Bellevue", state: "Nebraska" }, { name: "Grand Island", state: "Nebraska" }, { name: "Kearney", state: "Nebraska" }, { name: "Las Vegas", state: "Nevada" }, { name: "Henderson", state: "Nevada" }, { name: "Reno", state: "Nevada" }, { name: "North Las Vegas", state: "Nevada" }, { name: "Sparks", state: "Nevada" }, { name: "Manchester", state: "New Hampshire" }, { name: "Nashua", state: "New Hampshire" }, { name: "Concord", state: "New Hampshire" }, { name: "Dover", state: "New Hampshire" }, { name: "Rochester", state: "New Hampshire" }, { name: "Newark", state: "New Jersey" }, { name: "Jersey City", state: "New Jersey" }, { name: "Paterson", state: "New Jersey" }, { name: "Elizabeth", state: "New Jersey" }, { name: "Edison", state: "New Jersey" }, { name: "Albuquerque", state: "New Mexico" }, { name: "Las Cruces", state: "New Mexico" }, { name: "Rio Rancho", state: "New Mexico" }, { name: "Santa Fe", state: "New Mexico" }, { name: "Roswell", state: "New Mexico" }, { name: "New York", state: "New York" }, { name: "Buffalo", state: "New York" }, { name: "Rochester", state: "New York" }, { name: "Yonkers", state: "New York" }, { name: "Syracuse", state: "New York" }, { name: "Charlotte", state: "North Carolina" }, { name: "Raleigh", state: "North Carolina" }, { name: "Greensboro", state: "North Carolina" }, { name: "Durham", state: "North Carolina" }, { name: "Winston-Salem", state: "North Carolina" }, { name: "Fargo", state: "North Dakota" }, { name: "Bismarck", state: "North Dakota" }, { name: "Grand Forks", state: "North Dakota" }, { name: "Minot", state: "North Dakota" }, { name: "West Fargo", state: "North Dakota" }, { name: "Columbus", state: "Ohio" }, { name: "Cleveland", state: "Ohio" }, { name: "Cincinnati", state: "Ohio" }, { name: "Toledo", state: "Ohio" }, { name: "Akron", state: "Ohio" }, { name: "Oklahoma City", state: "Oklahoma" }, { name: "Tulsa", state: "Oklahoma" }, { name: "Norman", state: "Oklahoma" }, { name: "Broken Arrow", state: "Oklahoma" }, { name: "Lawton", state: "Oklahoma" }, { name: "Portland", state: "Oregon" }, { name: "Salem", state: "Oregon" }, { name: "Eugene", state: "Oregon" }, { name: "Gresham", state: "Oregon" }, { name: "Hillsboro", state: "Oregon" }, { name: "Philadelphia", state: "Pennsylvania" }, { name: "Pittsburgh", state: "Pennsylvania" }, { name: "Allentown", state: "Pennsylvania" }, { name: "Erie", state: "Pennsylvania" }, { name: "Reading", state: "Pennsylvania" }, { name: "Providence", state: "Rhode Island" }, { name: "Warwick", state: "Rhode Island" }, { name: "Cranston", state: "Rhode Island" }, { name: "Pawtucket", state: "Rhode Island" }, { name: "East Providence", state: "Rhode Island" }, { name: "Columbia", state: "South Carolina" }, { name: "Charleston", state: "South Carolina" }, { name: "North Charleston", state: "South Carolina" }, { name: "Mount Pleasant", state: "South Carolina" }, { name: "Rock Hill", state: "South Carolina" }, { name: "Sioux Falls", state: "South Dakota" }, { name: "Rapid City", state: "South Dakota" }, { name: "Aberdeen", state: "South Dakota" }, { name: "Brookings", state: "South Dakota" }, { name: "Watertown", state: "South Dakota" }, { name: "Memphis", state: "Tennessee" }, { name: "Nashville", state: "Tennessee" }, { name: "Knoxville", state: "Tennessee" }, { name: "Chattanooga", state: "Tennessee" }, { name: "Clarksville", state: "Tennessee" }, { name: "Houston", state: "Texas" }, { name: "San Antonio", state: "Texas" }, { name: "Dallas", state: "Texas" }, { name: "Austin", state: "Texas" }, { name: "Fort Worth", state: "Texas" }, { name: "Salt Lake City", state: "Utah" }, { name: "West Valley City", state: "Utah" }, { name: "Provo", state: "Utah" }, { name: "West Jordan", state: "Utah" }, { name: "Orem", state: "Utah" }, { name: "Burlington", state: "Vermont" }, { name: "South Burlington", state: "Vermont" }, { name: "Rutland", state: "Vermont" }, { name: "Barre", state: "Vermont" }, { name: "Montpelier", state: "Vermont" }, { name: "Virginia Beach", state: "Virginia" }, { name: "Norfolk", state: "Virginia" }, { name: "Chesapeake", state: "Virginia" }, { name: "Richmond", state: "Virginia" }, { name: "Newport News", state: "Virginia" }, { name: "Seattle", state: "Washington" }, { name: "Spokane", state: "Washington" }, { name: "Tacoma", state: "Washington" }, { name: "Vancouver", state: "Washington" }, { name: "Bellevue", state: "Washington" }, { name: "Charleston", state: "West Virginia" }, { name: "Huntington", state: "West Virginia" }, { name: "Morgantown", state: "West Virginia" }, { name: "Parkersburg", state: "West Virginia" }, { name: "Wheeling", state: "West Virginia" }, { name: "Milwaukee", state: "Wisconsin" }, { name: "Madison", state: "Wisconsin" }, { name: "Green Bay", state: "Wisconsin" }, { name: "Kenosha", state: "Wisconsin" }, { name: "Racine", state: "Wisconsin" }, { name: "Cheyenne", state: "Wyoming" }, { name: "Casper", state: "Wyoming" }, { name: "Laramie", state: "Wyoming" }, { name: "Gillette", state: "Wyoming" }, { name: "Rock Springs", state: "Wyoming" }]
   },
   {
-    name: "United Kingdom",
-    code: "GB",
-    cities: [
-      "London",
-      "Manchester",
-      "Birmingham",
-      "Leeds",
-      "Glasgow",
-      "Liverpool",
-      "Newcastle",
-      "Nottingham",
-      "Sheffield",
-      "Bristol",
-      "Belfast",
-      "Leicester",
-      "Edinburgh",
-      "Cambridge",
-      "Oxford",
-      "Cardiff",
-      "Brighton",
-      "Southampton",
-      "Portsmouth",
-      "Aberdeen"
-    ]
-  },
-  {
-    name: "Canada",
     code: "CA",
-    cities: [
-      "Toronto",
-      "Montreal",
-      "Vancouver",
-      "Calgary",
-      "Edmonton",
-      "Ottawa",
-      "Quebec City",
-      "Winnipeg",
-      "Hamilton",
-      "Halifax",
-      "Victoria",
-      "London",
-      "Saskatoon",
-      "Regina",
-      "St. John's",
-      "Kelowna",
-      "Kingston",
-      "Windsor",
-      "Mississauga",
-      "Burnaby"
-    ]
-  },
-  {
-    name: "Australia",
-    code: "AU",
-    cities: [
-      "Sydney",
-      "Melbourne",
-      "Brisbane",
-      "Perth",
-      "Adelaide",
-      "Gold Coast",
-      "Canberra",
-      "Newcastle",
-      "Wollongong",
-      "Logan City",
-      "Hobart",
-      "Geelong",
-      "Townsville",
-      "Cairns",
-      "Darwin",
-      "Toowoomba",
-      "Ballarat",
-      "Bendigo",
-      "Albury",
-      "Mackay"
-    ]
+    name: "Canada",
+    cities: [{ name: "Calgary", state: "Alberta" }, { name: "Edmonton", state: "Alberta" }, { name: "Red Deer", state: "Alberta" }, { name: "Lethbridge", state: "Alberta" }, { name: "St. Albert", state: "Alberta" }, { name: "Vancouver", state: "British Columbia" }, { name: "Surrey", state: "British Columbia" }, { name: "Burnaby", state: "British Columbia" }, { name: "Richmond", state: "British Columbia" }, { name: "Kelowna", state: "British Columbia" }, { name: "Winnipeg", state: "Manitoba" }, { name: "Brandon", state: "Manitoba" }, { name: "Steinbach", state: "Manitoba" }, { name: "Thompson", state: "Manitoba" }, { name: "Portage la Prairie", state: "Manitoba" }, { name: "Moncton", state: "New Brunswick" }, { name: "Saint John", state: "New Brunswick" }, { name: "Fredericton", state: "New Brunswick" }, { name: "Dieppe", state: "New Brunswick" }, { name: "Miramichi", state: "New Brunswick" }, { name: "St. John's", state: "Newfoundland and Labrador" }, { name: "Mount Pearl", state: "Newfoundland and Labrador" }, { name: "Corner Brook", state: "Newfoundland and Labrador" }, { name: "Gander", state: "Newfoundland and Labrador" }, { name: "Grand Falls-Windsor", state: "Newfoundland and Labrador" }, { name: "Halifax", state: "Nova Scotia" }, { name: "Sydney", state: "Nova Scotia" }, { name: "Truro", state: "Nova Scotia" }, { name: "New Glasgow", state: "Nova Scotia" }, { name: "Glace Bay", state: "Nova Scotia" }, { name: "Toronto", state: "Ontario" }, { name: "Ottawa", state: "Ontario" }, { name: "Mississauga", state: "Ontario" }, { name: "Brampton", state: "Ontario" }, { name: "Hamilton", state: "Ontario" }, { name: "Charlottetown", state: "Prince Edward Island" }, { name: "Summerside", state: "Prince Edward Island" }, { name: "Stratford", state: "Prince Edward Island" }, { name: "Cornwall", state: "Prince Edward Island" }, { name: "Montague", state: "Prince Edward Island" }, { name: "Montreal", state: "Quebec" }, { name: "Quebec City", state: "Quebec" }, { name: "Laval", state: "Quebec" }, { name: "Gatineau", state: "Quebec" }, { name: "Longueuil", state: "Quebec" }, { name: "Saskatoon", state: "Saskatchewan" }, { name: "Regina", state: "Saskatchewan" }, { name: "Prince Albert", state: "Saskatchewan" }, { name: "Moose Jaw", state: "Saskatchewan" }, { name: "Yorkton", state: "Saskatchewan" }, { name: "Yellowknife", state: "Northwest Territories" }, { name: "Hay River", state: "Northwest Territories" }, { name: "Inuvik", state: "Northwest Territories" }, { name: "Fort Smith", state: "Northwest Territories" }, { name: "Norman Wells", state: "Northwest Territories" }, { name: "Whitehorse", state: "Yukon" }, { name: "Dawson City", state: "Yukon" }, { name: "Watson Lake", state: "Yukon" }, { name: "Carmacks", state: "Yukon" }, { name: "Haines Junction", state: "Yukon" }, { name: "Iqaluit", state: "Nunavut" }, { name: "Rankin Inlet", state: "Nunavut" }, { name: "Arviat", state: "Nunavut" }, { name: "Baker Lake", state: "Nunavut" }, { name: "Cambridge Bay", state: "Nunavut" }]
   }
 ];
 
-export const findCountryByCode = (code: string): Country | undefined => {
-  return countries.find(country => country.code === code);
-};
-
-// export const formatLocation = (city: string, countryCode: string): string => {
-//   const country = findCountryByCode(countryCode);
-//   return country ? `${city}, ${country.name}` : city;
-// };
+export const findCountryByCode = (code: string): Country | undefined =>
+  countries.find(c => c.code === code);

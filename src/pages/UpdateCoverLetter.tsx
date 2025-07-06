@@ -136,10 +136,10 @@ const UpdateCoverLetter: React.FC = () => {
 
                 <div>
                   <label htmlFor="jobDescription" className="block text-sm font-medium text-gray-700">
-                    Job Description
+                    Responsibility
                   </label>
                   <p className="text-sm text-gray-500 mb-2">
-                    Paste the job description to help our AI tailor your cover letter.
+                    Paste the responsibility to help our AI tailor your cover letter.
                   </p>
                   <textarea
                     id="description"
@@ -147,7 +147,7 @@ const UpdateCoverLetter: React.FC = () => {
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     rows={6}
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-primary-500 focus:outline-none focus:ring-primary-500"
-                    placeholder="Paste the job description here..."
+                    placeholder="Paste the responsibility here..."
                     required
                   />
                 </div>
