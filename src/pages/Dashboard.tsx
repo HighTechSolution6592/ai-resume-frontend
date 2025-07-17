@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { File, FileText, Plus, Edit, Download, Trash2, Search, FileCheck } from 'lucide-react';
+import { FileText, Edit, Trash2, FileCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Button from '../components/ui/Button';
 import Navbar from '../components/layout/Navbar';
-// import { mockResumes } from '../utils/mockData';
 import { toast } from 'sonner';
 import { Resume, CoverLetter } from '../types';
 import { getAllResume, getAllCoverLetter, deleteResume, deleteCoverLetter } from '../utils/axios'; // Adjust the import based on your API structure
@@ -164,6 +163,22 @@ const DocumentCard: React.FC<{
   // onDownloadDOCX: () => void;
 }> = ({ document, onEdit }) => {
   const [showDropdown, setShowDropdown] = useState(false);
+    const dropdownRef = useRef(null);
+
+  useEffect(() => {
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        (dropdownRef as React.MutableRefObject<HTMLDivElement | null>).current &&
+        !(dropdownRef as React.MutableRefObject<HTMLDivElement | null>).current!.contains(event.target as Node)
+      ) {
+        setShowDropdown(false);
+      }
+    };
+
+    window.document.addEventListener("mousedown", handleClickOutside);
+    return () => window.document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -176,7 +191,7 @@ const DocumentCard: React.FC<{
 
   const isResume = document.type === 'resume';
 
-    const handleDelete = async (id: string, type: string) => {
+  const handleDelete = async (id: string, type: string) => {
     if (!document) return;
     if (type === 'resume') {
       try {
@@ -245,7 +260,7 @@ const DocumentCard: React.FC<{
             </div>
           </div>
           
-          <div className="relative">
+          <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setShowDropdown(!showDropdown)}
               className="text-gray-400 hover:text-gray-500 focus:outline-none"
@@ -299,33 +314,39 @@ const DocumentCard: React.FC<{
             <>
               <h4 className="text-sm font-medium text-gray-700">Position</h4>
               <p className="text-sm text-gray-600">
-                {(Array.isArray(document.workExperience) && document.workExperience[0]?.position) || 'Not specified'}
+                {isResume && Array.isArray((document as Resume).workExperience) && (document as Resume).workExperience[0]?.position
+                  ? (document as Resume).workExperience[0]?.position
+                  : 'Not specified'}
               </p>
               
               <h4 className="mt-3 text-sm font-medium text-gray-700">Skills</h4>
               <div className="mt-1 flex flex-wrap gap-1">
-                {Array.isArray(document.skills) && document.skills.slice(0, 3).map((skill: string, index: number) => (
-    <span
-      key={index}
-      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
-    >
-      {skill}
-    </span>
-  ))}
-  {Array.isArray(document.skills) && document.skills.length > 3 && (
-    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-      +{document.skills.length - 3} more
-    </span>
-  )}
+                {isResume &&
+                  Array.isArray((document as Resume).skills) &&
+                  (document as Resume).skills.slice(0, 3).map((skill: string, index: number) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+                    >
+                      {skill}
+                    </span>
+                  ))}
+                {isResume &&
+                  Array.isArray((document as Resume).skills) &&
+                  (document as Resume).skills.length > 3 && (
+                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      +{(document as Resume).skills.length - 3} more
+                    </span>
+                  )}
               </div>
             </>
           ) : (
             <>
               <h4 className="text-sm font-medium text-gray-700">Company</h4>
-              <p className="text-sm text-gray-600">{document.companyName}</p>
+              <p className="text-sm text-gray-600">{(document as CoverLetter).companyName}</p>
               
               <h4 className="mt-3 text-sm font-medium text-gray-700">Position</h4>
-              <p className="text-sm text-gray-600">{document.jobTitle}</p>
+              <p className="text-sm text-gray-600">{(document as CoverLetter).jobTitle}</p>
             </>
           )}
         </div>
